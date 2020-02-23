@@ -29,7 +29,6 @@ public class JobController {
     @Autowired
     Job csvToDbJob;
 
-
     @Autowired
     EmployeeRepository employeeRepository;
 
@@ -39,20 +38,10 @@ public class JobController {
             JobRestartException,
             JobInstanceAlreadyCompleteException {
 
-        return this.executeJob(csvToDbJob);
-    }
-
-    private String executeJob(Job job) throws
-            JobParametersInvalidException,
-            JobExecutionAlreadyRunningException,
-            JobRestartException,
-            JobInstanceAlreadyCompleteException {
-        System.out.println("Batch is Running...");
-
         Map<String, JobParameter> maps = new HashMap<>();
         maps.put("time", new JobParameter(System.currentTimeMillis()));
         JobParameters parameters = new JobParameters(maps);
-        JobExecution jobExecution = jobLauncher.run(job, parameters);
+        JobExecution jobExecution = jobLauncher.run(csvToDbJob, parameters);
         return String.format("Job "+jobExecution.getJobInstance()+" submitted successfully."+jobExecution.getStatus().toString());
     }
 
