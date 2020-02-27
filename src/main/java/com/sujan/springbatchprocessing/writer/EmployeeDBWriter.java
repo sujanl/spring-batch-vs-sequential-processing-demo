@@ -21,6 +21,6 @@ public class EmployeeDBWriter implements ItemWriter<Employee> {
     @Override
     public void write(List<? extends Employee> employees) throws Exception {
         employeeRepository.saveAll(employees);
-            System.out.println("inside writer " + employees);
+//            System.out.println("inside writer " + employees);
     }
 }

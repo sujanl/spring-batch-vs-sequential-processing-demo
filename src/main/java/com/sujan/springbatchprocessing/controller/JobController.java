@@ -37,15 +37,14 @@ public class JobController {
             JobExecutionAlreadyRunningException,
             JobRestartException,
             JobInstanceAlreadyCompleteException {
-
-        Map<String, JobParameter> maps = new HashMap<>();
-        maps.put("time", new JobParameter(System.currentTimeMillis()));
-        JobParameters parameters = new JobParameters(maps);
+        Map<String, JobParameter> params = new HashMap<>();
+        params.put("time", new JobParameter(System.currentTimeMillis()));
+        JobParameters parameters = new JobParameters(params);
         JobExecution jobExecution = jobLauncher.run(csvToDbJob, parameters);
         return String.format("Job "+jobExecution.getJobInstance()+" submitted successfully."+jobExecution.getStatus().toString());
     }
 
-    @GetMapping("/sequential")
+    @GetMapping("/non-batch")
     public String csvToDbSimply(){
         long startTime = System.nanoTime();
         String csvFile = "src/main/resources/employees.csv";
@@ -59,10 +58,10 @@ public class JobController {
                 employee.setLastName(line[1]);
                 employee.setEmail(line[2]);
                 employee.setAge(Integer.parseInt(line[3]));
-                System.out.println("Employee==> "+employee.getFirstName()
+               /* System.out.println("Employee==> "+employee.getFirstName()
                         +", "+employee.getLastName()
                         +", "+employee.getEmail()
-                        +", "+employee.getAge());
+                        +", "+employee.getAge());*/
                 employeeList.add(employee);
                 System.out.println(employeeList.size());
             }
@@ -71,6 +70,7 @@ public class JobController {
         }
         System.out.println("Saving to database....");
         employeeRepository.saveAll(employeeList);
+
         long elapsedTime = System.nanoTime() - startTime;
         System.out.println("Total elapsed time in nanoseconds: " + elapsedTime);
         return "Total elapsed time: " + elapsedTime/1_000_000_000+"sec\n SIze: "+employeeList.size();
